@@ -1,0 +1,70 @@
+package giulio_marra.s6_l5_be_esame.services;
+
+import giulio_marra.s6_l5_be_esame.entites.Dispositivo;
+import giulio_marra.s6_l5_be_esame.enums.Stato_dispositivo;
+import giulio_marra.s6_l5_be_esame.enums.Tipo_dispositivo;
+import giulio_marra.s6_l5_be_esame.exceptions.ErrorsPayload;
+import giulio_marra.s6_l5_be_esame.payloads.DispositivoDTO;
+import giulio_marra.s6_l5_be_esame.repositories.DispositivoREPO;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Service
+public class DispositivoSERVICE {
+    @Autowired
+    private DispositivoREPO dispositivoREPO;
+
+    @Autowired
+    private DipendenteSERVICES dipendenteSERVICES;
+
+    public Dispositivo saveDispositivo(DispositivoDTO body) {
+        if (dispositivoREPO.existsByNome(body.identificativo_dispositivo())) {
+            throw new RuntimeException("Dispositivo con questo identificativo gia esistente");
+        }
+        Dispositivo dispositivo = new Dispositivo();
+        dispositivo.setNome_dispositivo(body.identificativo_dispositivo());
+        dispositivo.setTipo_dispositivo(Tipo_dispositivo.valueOf(body.tipo_dispositivo()));
+        dispositivo.setStato_dispositivo(Stato_dispositivo.valueOf(body.stato_dispositivo()));
+
+        return dispositivoREPO.save(dispositivo);
+    }
+
+    public Dispositivo getDispositivo(long id) {
+        Optional<Dispositivo> optionalDispositivo = dispositivoREPO.findById(id);
+        if (optionalDispositivo.isPresent()) {
+            return optionalDispositivo.get();
+        } else {
+            ErrorsPayload errorPayload = new ErrorsPayload("Dispositivo non trovato per l'ID specificato", LocalDateTime.now());
+            throw new RuntimeException(errorPayload.getMessage());
+        }
+    }
+
+    public Page<Dispositivo> getDispositivi(int pageNumber, int pageSize, String sortBy) {
+        if (pageSize > 10) pageSize = 10;
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, Sort.by(sortBy));
+        return dispositivoREPO.findAll(pageable);
+    }
+
+    public void getAndDeleteDispositivo(long id) {
+        Dispositivo dispositivo = getDispositivo(id);
+
+        dispositivoREPO.delete(dispositivo);
+    }
+
+    public Dispositivo getAndUpdateDispositivo(long id, DispositivoDTO updatedDispositivoDTO) {
+        Dispositivo dispositivo = getDispositivo(id);
+
+        dispositivo.setNome_dispositivo(updatedDispositivoDTO.identificativo_dispositivo());
+        dispositivo.setTipo_dispositivo(Tipo_dispositivo.valueOf(updatedDispositivoDTO.tipo_dispositivo()));
+
+
+        return dispositivoREPO.save(dispositivo);
+    }
+}
