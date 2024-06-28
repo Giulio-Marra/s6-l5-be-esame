@@ -4,7 +4,7 @@ import giulio_marra.s6_l5_be_esame.entites.Dipendente;
 import giulio_marra.s6_l5_be_esame.entites.Dispositivo;
 import giulio_marra.s6_l5_be_esame.enums.Stato_dispositivo;
 import giulio_marra.s6_l5_be_esame.enums.Tipo_dispositivo;
-import giulio_marra.s6_l5_be_esame.exceptions.ErrorsPayload;
+import giulio_marra.s6_l5_be_esame.exceptions.BadRequestException;
 import giulio_marra.s6_l5_be_esame.payloads.DispositivoDTO;
 import giulio_marra.s6_l5_be_esame.payloads.DispositivoPayload;
 import giulio_marra.s6_l5_be_esame.repositories.DispositivoREPO;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -43,8 +42,7 @@ public class DispositivoSERVICE {
         if (optionalDispositivo.isPresent()) {
             return optionalDispositivo.get();
         } else {
-            ErrorsPayload errorPayload = new ErrorsPayload("Dispositivo non trovato per l'ID specificato", LocalDateTime.now());
-            throw new RuntimeException(errorPayload.getMessage());
+            throw new BadRequestException("Dispositivo non trovato per l'ID specificato");
         }
     }
 

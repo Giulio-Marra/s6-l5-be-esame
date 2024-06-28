@@ -30,6 +30,7 @@ public class DispositivoCONTROLLER {
     }
 
     @GetMapping("/{dispositivoId}")
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Dispositivo getDispositivoById(@PathVariable long dispositivoId) {
         return dispositivoSERVICE.getDispositivo(dispositivoId);
     }
