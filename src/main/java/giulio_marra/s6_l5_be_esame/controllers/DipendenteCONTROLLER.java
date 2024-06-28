@@ -11,6 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/dipendenti")
@@ -46,5 +49,11 @@ public class DipendenteCONTROLLER {
     @PutMapping("/{dipendenteId}")
     public Dipendente getAndUpdateDipendente(@PathVariable long dipendenteId, @RequestBody DipendenteDTO body) {
         return dipendenteSERVICES.getAndUpdateDipendente(dipendenteId, body);
+    }
+
+    @PostMapping("/{dipendenteId}/avatar")
+    public String uploadAvatar(@RequestParam("avatar") MultipartFile image, @PathVariable("dipendenteId") long id) throws IOException {
+
+        return dipendenteSERVICES.uploadImage(id, image);
     }
 }

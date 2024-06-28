@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
-
 @Entity
 @Getter
 @Setter
@@ -21,8 +19,6 @@ public class Dispositivo {
     private long id;
 
     private String nome;
-
-    private LocalDate data_assegnazione;
 
     @ManyToOne
     @JoinColumn(name = "dipendente_id")
