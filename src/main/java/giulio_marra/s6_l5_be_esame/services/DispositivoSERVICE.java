@@ -1,10 +1,12 @@
 package giulio_marra.s6_l5_be_esame.services;
 
+import giulio_marra.s6_l5_be_esame.entites.Dipendente;
 import giulio_marra.s6_l5_be_esame.entites.Dispositivo;
 import giulio_marra.s6_l5_be_esame.enums.Stato_dispositivo;
 import giulio_marra.s6_l5_be_esame.enums.Tipo_dispositivo;
 import giulio_marra.s6_l5_be_esame.exceptions.ErrorsPayload;
 import giulio_marra.s6_l5_be_esame.payloads.DispositivoDTO;
+import giulio_marra.s6_l5_be_esame.payloads.DispositivoPayload;
 import giulio_marra.s6_l5_be_esame.repositories.DispositivoREPO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,7 +31,7 @@ public class DispositivoSERVICE {
             throw new RuntimeException("Dispositivo con questo identificativo gia esistente");
         }
         Dispositivo dispositivo = new Dispositivo();
-        dispositivo.setNome_dispositivo(body.identificativo_dispositivo());
+        dispositivo.setNome(body.identificativo_dispositivo());
         dispositivo.setTipo_dispositivo(Tipo_dispositivo.valueOf(body.tipo_dispositivo()));
         dispositivo.setStato_dispositivo(Stato_dispositivo.valueOf(body.stato_dispositivo()));
 
@@ -58,13 +60,21 @@ public class DispositivoSERVICE {
         dispositivoREPO.delete(dispositivo);
     }
 
-    public Dispositivo getAndUpdateDispositivo(long id, DispositivoDTO updatedDispositivoDTO) {
+    public Dispositivo update(long id, DispositivoPayload body) {
         Dispositivo dispositivo = getDispositivo(id);
 
-        dispositivo.setNome_dispositivo(updatedDispositivoDTO.identificativo_dispositivo());
-        dispositivo.setTipo_dispositivo(Tipo_dispositivo.valueOf(updatedDispositivoDTO.tipo_dispositivo()));
+        dispositivo.setStato_dispositivo(body.getStatoDispositivo());
+        dispositivo.setTipo_dispositivo(body.getTipoDispositivo());
+        dispositivo.setNome(body.getIdentificativo());
 
-
+        if (dispositivo.getDipendente() == null || dispositivo.getDipendente().getId() != body.getId_dipendente()) {
+            if (body.getId_dipendente() != 0) {
+                Dipendente dipendente = dipendenteSERVICES.getDipendente(body.getId_dipendente());
+                dispositivo.setDipendente(dipendente);
+            } else {
+                dispositivo.setDipendente(null);
+            }
+        }
         return dispositivoREPO.save(dispositivo);
     }
 }

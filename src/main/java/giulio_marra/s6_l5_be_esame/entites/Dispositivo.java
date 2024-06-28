@@ -20,7 +20,7 @@ public class Dispositivo {
     @GeneratedValue
     private long id;
 
-    private String nome_dispositivo;
+    private String nome;
 
     private LocalDate data_assegnazione;
 
@@ -34,10 +34,8 @@ public class Dispositivo {
     @Enumerated(EnumType.STRING)
     private Stato_dispositivo stato_dispositivo;
 
-    public Dispositivo(String nome_dispositivo, Tipo_dispositivo tipo_dispositivo, Stato_dispositivo stato_dispositivo) {
-        this.nome_dispositivo = nome_dispositivo;
-        this.data_assegnazione = data_assegnazione;
-        this.dipendente = dipendente;
+    public Dispositivo(String nome, Tipo_dispositivo tipo_dispositivo, Stato_dispositivo stato_dispositivo) {
+        this.nome = nome;
         this.tipo_dispositivo = tipo_dispositivo;
         this.stato_dispositivo = stato_dispositivo;
     }
